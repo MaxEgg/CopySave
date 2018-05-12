@@ -1,5 +1,6 @@
 
 import clipboard.ClipboardListener;
+import clipboard.ClipboardListener2;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -23,7 +24,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import websockets.Servlet;
 
-public class App extends Application {
+public class App  {
     
     ArrayList<ClipboardItem> clipboardItems = new ArrayList<ClipboardItem>();
     
@@ -31,19 +32,19 @@ public class App extends Application {
    
     public static void main(String[] args) throws InterruptedException {
         //start clipboard
-    	ClipboardListener cl = new ClipboardListener();
+    	ClipboardListener2 cl = new ClipboardListener2();
         Thread t1 = new Thread(cl);
         t1.start();
             
-        launch(args);
+//        launch(args);
     }  
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        window = primaryStage;
-        window.setTitle("Copybox");
-        
-    }
+//    @Override
+//    public void start(Stage primaryStage) throws Exception {
+//        window = primaryStage;
+//        window.setTitle("Copybox");
+//        
+//    }
     
 }
 

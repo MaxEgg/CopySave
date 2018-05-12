@@ -58,7 +58,7 @@ public class ClipboardListener implements ClipboardOwner, Runnable{
         String clipboardText = "";
         Image clipboardImage = null;
         ClipboardItem clipboardItem = null;
-        
+            
         try {
             clipboardText = (String) clipboard.getData(DataFlavor.stringFlavor);
             clipboardItem = new ClipboardItem(true, clipboardText, null);
