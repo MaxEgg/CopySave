@@ -1,6 +1,5 @@
 
 import clipboard.ClipboardListener;
-import clipboard.ClipboardListener2;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -32,7 +31,7 @@ public class App  {
    
     public static void main(String[] args) throws InterruptedException {
         //start clipboard
-    	ClipboardListener2 cl = new ClipboardListener2();
+    	ClipboardListener cl = new ClipboardListener();
         Thread t1 = new Thread(cl);
         t1.start();
             
