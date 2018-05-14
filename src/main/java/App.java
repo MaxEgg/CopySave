@@ -1,70 +1,28 @@
 
+import clipboard.ClipboardContent;
+import clipboard.ClipboardEvent;
 import clipboard.ClipboardListener;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.FlavorEvent;
-import java.awt.datatransfer.FlavorListener;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import javafx.application.Application;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import javax.swing.SwingUtilities;
-import model.ClipboardItem;
-import websockets.Client;
 
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import websockets.Servlet;
-
-public class App  {
-    
-    ArrayList<ClipboardItem> clipboardItems = new ArrayList<ClipboardItem>();
-    
-    Stage window; 
-   
+public class App {
+           
     public static void main(String[] args) throws InterruptedException {
         //start clipboard
-    	ClipboardListener cl = new ClipboardListener();
-        Thread t1 = new Thread(cl);
-        t1.start();
-            
-//        launch(args);
-    }  
+        
+        ClipboardListener lis = (ClipboardEvent e) -> {
+            System.out.println("HI");
+            System.out.println(e.getImage());
+            System.out.println(e.getText());
 
-//    @Override
-//    public void start(Stage primaryStage) throws Exception {
-//        window = primaryStage;
-//        window.setTitle("Copybox");
-//        
-//    }
+        };
+        
+        ClipboardContent cc = new ClipboardContent();
+        cc.addListener(lis);
+        Thread t1 = new Thread(cc);
+        t1.start();
+    }
     
+    
+
+ 
 }
 
-
-
-
-
-
-
-        //start websocket server
-//        Server server = new Server(55588);
-//        ServletContextHandler serverContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-//        serverContextHandler.setContextPath("/");
-//        server.setHandler(serverContextHandler);
-//        
-//        ServletHolder holderEvents = new ServletHolder("ws-events", Servlet.class);
-//        serverContextHandler.addServlet(holderEvents, "/*");
-//        
-//        try {
-//            server.start();
-//            server.join();
-//        } catch (Exception e) {
-//            System.err.println("Server error:\n" + e);
-//            e.printStackTrace(System.err);

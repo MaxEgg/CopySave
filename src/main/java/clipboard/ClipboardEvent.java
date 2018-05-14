@@ -1,23 +1,47 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package clipboard;
 
-/**
- *
- * @author max
- */
+import java.awt.Image;
+
 public class ClipboardEvent {
     
-    private ClipboardListener source;
+    private ClipboardContent source;
+    private ClipboardItem clipboardItem;
     
-    public ClipboardEvent(ClipboardListener source){
+    public ClipboardEvent(ClipboardContent source, ClipboardItem clipboardItem){
         this.source = source;
+        this.clipboardItem = clipboardItem;
     }
     
-    public ClipboardListener getSource(){
+    /**
+     * Returns the clipboard item
+     * @return ClipboardItem
+     */
+    public ClipboardItem getClipboardItem(){
+        return clipboardItem;
+    }
+    
+    /** 
+     * Returns the text from the last clipboardItem 
+     * @return 
+     */
+    public Image getImage(){
+        return clipboardItem.getImage();
+    }
+    
+    /** 
+     * Returns the text from the last clipboardItem 
+     * @return 
+     */
+    public String getText(){
+        return clipboardItem.getText();
+    }
+    
+    /**
+     * Get the source from the event
+     * @return 
+     */
+    public ClipboardContent getSource(){
         return source;
     }
 }

@@ -7,10 +7,7 @@ package clipboard;
 
 import java.awt.Image;
 
-/**
- *
- * @author max
- */
+
 public class ClipboardItem {
     
     private Image image; 
