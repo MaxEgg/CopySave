@@ -12,6 +12,8 @@ plugins {
 
     // Apply the application plugin to add support for building an application
     id 'application'
+    
+    id "com.github.johnrengelman.shadow" version "2.0.4"
 }
 
 // Define the main class for the application
@@ -20,8 +22,9 @@ mainClassName = 'App'
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     compile 'com.google.guava:guava:23.0'
-    compile group: 'org.eclipse.jetty.websocket', name: 'websocket-server', version: '9.4.9.v20180320'
-
+//    compile group: 'org.eclipse.jetty.websocket', name: 'websocket-server', version: '9.4.9.v20180320'
+    //richtext nog niet nodig, kan later wel handig zijn.
+//compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.9.0'
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'
 }
@@ -31,10 +34,4 @@ repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
-}
-
-task unpackFiles(type: Copy) {
-    from tarTree(file("${buildDir}/distributions/cblistener.tar"))
-    // from "${buildDir}/distributions"
-    into "${rootDir}/src/electron/server"
 }

@@ -38,6 +38,14 @@ public class ClipboardEvent {
     }
     
     /**
+     * Returns the HTML from the last clipboardItem
+     * @return 
+     */
+    public String getHtml(){
+        return clipboardItem.getHtml();
+    }
+    
+    /**
      * Get the source from the event
      * @return 
      */
