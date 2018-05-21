@@ -13,6 +13,7 @@ import clipboard.ClipboardListener;
 import clipboard.HtmlTransferable;
 import clipboard.ImageTransferable;
 import front.components.ClipboardItemView;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -23,39 +24,41 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
 public class ClipboardController {
-        
+
     private ScrollPane scrollPane;
-    private VBox vbox;   
+    private VBox vbox;
     private List<ClipboardItem> clipboardItems;
     private Clipboard clipboard;
 
     /**
      * Controller for the clipboard object;
      */
-    public ClipboardController(){
+    public ClipboardController() {
         this.clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         this.clipboardItems = new ArrayList<>();
         initView();
         initListener();
     }
-    
+
     /**
      * Get the view
-     * @return 
+     *
+     * @return
      */
-    public ScrollPane getView(){
+    public ScrollPane getView() {
         return scrollPane;
     }
-    
+
     /**
      * Initiate the view component.
      */
-    private void initView(){
+    private void initView() {
         this.scrollPane = new ScrollPane();
         scrollPane.setPrefViewportHeight(1000);
         scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
@@ -69,83 +72,106 @@ public class ClipboardController {
         vbox.setSpacing(5);
         scrollPane.setContent(vbox);
     }
-    
+
     /**
-     * Initiate the clipboard content listener. When the event fires the addItem function is called.
+     * Initiate the clipboard content listener. When the event fires the addItem
+     * function is called.
      */
-    private void initListener(){
+    private void initListener() {
         ClipboardListener lis = (ClipboardEvent e) -> {
-            clipboardItems.add(e.getClipboardItem());
-            int index = clipboardItems.size() -1;
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    addItem(index, e.getClipboardItem());
+            if (e.getClipboardItem().getDataType() == DataType.IMAGELIST) {
+                List<Image> images = e.getClipboardItem().getImages();
+                for (int x = 0; x < images.size(); ++x) {
+                    ClipboardItem clipboardItem = new ClipboardItem(DataType.IMAGE);
+                    clipboardItem.setImage(images.get(x));
+                    clipboardItems.add(clipboardItem);
+                    addItem(clipboardItem);
                 }
-            });
+            } else {
+                clipboardItems.add(e.getClipboardItem());
+                addItem(e.getClipboardItem());
+            }
         };
-        
+
         ClipboardContent cc = new ClipboardContent();
         cc.addListener(lis);
         new Thread(cc).start();
     }
-    
+
     /**
-     * The add item function created a new view and adds the content to the clipboard
-     * @param index id of the object so it can be found inside the clipboardItems list.
+     * The add item function created a new view and adds the content to the
+     * clipboard
+     *
+     * @param index id of the object so it can be found inside the
+     * clipboardItems list.
      * @param item The object inserted
      */
-    public void addItem(int index, ClipboardItem item){
-        ClipboardItemView clipboardItemView = new ClipboardItemView(index, item);
-        AnchorPane itemView = clipboardItemView.getView();
-       
-        itemView.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-           @Override
-           public void handle(MouseEvent event) {
-                 Platform.runLater(new Runnable() {
-                   @Override
-                   public void run() {
-                       AnchorPane anchorPane = (AnchorPane) event.getSource();
-                       int id = Integer.parseInt(anchorPane.getId().trim());
-                       setClipboardContent(id);
-                   }
-               });
-           }
-       });
-       vbox.getChildren().add(0, itemView);
+    public void addItem(ClipboardItem item) {
+
+        int index = clipboardItems.size() - 1;
+   
+        
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                    ClipboardItemView clipboardItemView = new ClipboardItemView(index, item);
+
+                    AnchorPane itemView = clipboardItemView.getView();
+
+                    itemView.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AnchorPane anchorPane = (AnchorPane) event.getSource();
+                                    int id = Integer.parseInt(anchorPane.getId().trim());
+                                    setClipboardContent(id);
+                                }
+                            });
+                        }
+                    });
+                
+                vbox.getChildren().add(0, itemView);
+            }
+        });
     }
-    
+
     /**
      * Set the clipboard content to the clicked object
-     * @param index 
+     *
+     * @param index
      */
-    public void setClipboardContent(int index){
+    public void setClipboardContent(int index) {
         ClipboardItem clipboardItem = clipboardItems.get(index);
-        
+
         DataType dataType = clipboardItem.getDataType();
-        
-        switch(dataType){
+
+        switch (dataType) {
             case TEXT:
                 StringSelection stringclip = new StringSelection(clipboardItem.getText());
                 clipboard.setContents(stringclip, null);
                 break;
             case IMAGE:
+                System.out.println("1"+clipboardItem.getImage());
+                System.out.println(", clipboardItem.getText()" + clipboardItem.getText());
                 ImageTransferable imageTransferable = new ImageTransferable(clipboardItem.getImage(), clipboardItem.getText());
                 clipboard.setContents(imageTransferable, null);
                 break;
             case HTML:
+         
                 HtmlTransferable htmlTransferable = new HtmlTransferable(clipboardItem.getHtml(), clipboardItem.getText());
                 clipboard.setContents(htmlTransferable, null);
                 break;
         }
     }
-    
+
     /**
      * Get the clipboard list
-     * @return 
+     *
+     * @return
      */
-    public List<ClipboardItem> getList(){
+    public List<ClipboardItem> getList() {
         return clipboardItems;
     }
 }
-

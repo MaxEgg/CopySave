@@ -51,6 +51,7 @@ public class ClipboardItemView {
         pane.setStyle("-fx-background-color: linear-gradient(to bottom, #ffffff, #ececec);");
         
         DataType dataType = item.getDataType();
+        
         switch(dataType){
             case TEXT: 
                     Text text = new Text();
@@ -77,6 +78,7 @@ public class ClipboardItemView {
                     WebEngine engine =  webview.getEngine();
                     engine.loadContent(item.getHtml());            
                     pane.getChildren().add(webview);
+                    
                 break;
         }
  

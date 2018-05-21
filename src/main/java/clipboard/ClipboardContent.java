@@ -12,12 +12,19 @@ import java.awt.datatransfer.FlavorListener;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.image.PixelGrabber;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.WritableImage;
+import javax.imageio.ImageIO;
 
 public class ClipboardContent implements Runnable {
 
@@ -128,7 +135,42 @@ public class ClipboardContent implements Runnable {
                     return true;
                 }
                 break;
-
+                
+            case IMAGELIST:
+                List files = (List) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                    
+                List<File> oldFiles = lastClipboardItem.getFiles();
+                if(     oldFiles == null || 
+                        (oldFiles.isEmpty() && !files.isEmpty()) ||
+                        files.size() != oldFiles.size() 
+                ){
+                    String filenames = null;
+                    if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                        filenames = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                    }
+                    if(filenames != null ||
+                            !filenames.trim().equals(lastClipboardItem.getText())){
+                        List<Image> images = new ArrayList();
+                        for(int x = 0; x < files.size(); ++x){
+                            Pattern p = Pattern.compile(".jpeg+$|.png+$|.jpg+$");
+                            Matcher m = p.matcher(files.get(x).toString());
+                            if(m.find()){
+                                Image fileImg = ImageIO.read((File)files.get(x));
+                                images.add(fileImg);
+                            }
+                        }
+                        
+                        if(images.size() > 0 ){
+                            lastClipboardItem = new ClipboardItem(DataType.IMAGELIST);
+                            lastClipboardItem.setImages(images);
+                            lastClipboardItem.setFiles(files);
+                            lastClipboardItem.setText(filenames);
+                            return true;
+                        }
+                    }
+                }
+                
+                break;
             default:
                 return false;
         }
@@ -140,27 +182,22 @@ public class ClipboardContent implements Runnable {
      * Figure out data flavor of the transferable. The order is important.
      */
     private DataType checkType(Transferable transferable) throws UnsupportedFlavorException, IOException {
-
+        if(transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)){
+            return DataType.IMAGELIST;
+        }
+        else 
         if (transferable.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-            if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                if(text.indexOf("http") == 0){
-                    return DataType.IMAGE;
-                }else{
-                    return DataType.ONSUPPORTED;
-                }
-            }
             return DataType.IMAGE;
         }
-
+        else
         if (transferable.isDataFlavorSupported(DataFlavor.fragmentHtmlFlavor)) {
             return DataType.HTML;
         }
-
+        else
         if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
             return DataType.TEXT;
         }
-        System.out.println("UNSupoorted");
+
         return DataType.ONSUPPORTED;
     }
 

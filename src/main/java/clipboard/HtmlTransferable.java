@@ -38,7 +38,6 @@ public class HtmlTransferable implements Transferable {
         if(this.plain != null && !this.plain.equals(null) && !this.plain.isEmpty() && flavor == DataFlavor.stringFlavor){
             return true;
         }
-        
         return flavor == DataFlavor.fragmentHtmlFlavor;
     }
 

@@ -8,6 +8,8 @@ package clipboard;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.WritableImage;
 
@@ -16,6 +18,8 @@ public class ClipboardItem {
     private Image image;
     private String text;
     private String html;
+    private List<Image> images;
+    private List<File> files;
 
     private DataType dataType;
 
@@ -68,6 +72,25 @@ public class ClipboardItem {
     }
     
     /**
+     * Getter and setter for a list of files 
+     */
+    public void setImages(List<Image> images){
+        this.images = images;
+    }
+    
+    public void setFiles(List<File> files){
+        this.files = files;
+    }
+    
+    public List<Image> getImages(){
+        return this.images;
+    }
+    
+    public List<File> getFiles(){
+        return this.files;
+    }
+   
+    /**
      * Transform the image into an into for java FX
      * @return 
      */
@@ -84,6 +107,7 @@ public class ClipboardItem {
         IMAGE,
         HTML,
         TEXT,
+        IMAGELIST,
         ONSUPPORTED
     }
 }
