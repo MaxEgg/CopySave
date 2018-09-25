@@ -22,8 +22,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.WritableImage;
 import javax.imageio.ImageIO;
 
 public class ClipboardContent implements Runnable {
@@ -40,7 +38,6 @@ public class ClipboardContent implements Runnable {
 
     /**
      * Add a listener to the clipboard events
-     *
      * @param listener
      */
     public synchronized void addListener(ClipboardListener listener) {
@@ -49,7 +46,6 @@ public class ClipboardContent implements Runnable {
 
     /**
      * Remove a listener from the clipboard events
-     *
      * @param listener
      */
     public synchronized void removeListener(ClipboardListener listener) {
@@ -98,7 +94,7 @@ public class ClipboardContent implements Runnable {
     private boolean checkContentChanged(Transferable transferable) throws UnsupportedFlavorException, IOException, InterruptedException {
 
         DataType dataType = checkType(transferable);
-
+          
         switch (dataType) {
 
             case HTML:
@@ -121,6 +117,7 @@ public class ClipboardContent implements Runnable {
                     lastClipboardItem.setImage(img);
                     if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                         String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                        System.out.println("string" + text);
                         lastClipboardItem.setText(text);
                     }
                     return true;
@@ -129,7 +126,7 @@ public class ClipboardContent implements Runnable {
 
             case TEXT:
                 String str = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                if (!str.equals(lastClipboardItem.getText())) {
+                if (!str.trim().equals("") && !str.equals(lastClipboardItem.getText())) {
                     lastClipboardItem = new ClipboardItem(DataType.TEXT);
                     lastClipboardItem.setText(str);
                     return true;
@@ -138,18 +135,20 @@ public class ClipboardContent implements Runnable {
                 
             case IMAGELIST:
                 List files = (List) transferable.getTransferData(DataFlavor.javaFileListFlavor);
-                    
+                   
                 List<File> oldFiles = lastClipboardItem.getFiles();
-                if(     oldFiles == null || 
-                        (oldFiles.isEmpty() && !files.isEmpty()) ||
-                        files.size() != oldFiles.size() 
+                String filenames = null;
+                
+                if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                    filenames = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                }
+           
+                if( oldFiles == null || 
+                    (oldFiles.isEmpty() && !files.isEmpty()) ||
+                    files.size() != oldFiles.size() ||
+                    filenames != lastClipboardItem.getText()
                 ){
-                    String filenames = null;
-                    if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                        filenames = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                    }
-                    if(filenames != null ||
-                            !filenames.trim().equals(lastClipboardItem.getText())){
+                    if(filenames != null && !filenames.trim().equals(lastClipboardItem.getText())){
                         List<Image> images = new ArrayList();
                         for(int x = 0; x < files.size(); ++x){
                             Pattern p = Pattern.compile(".jpeg+$|.png+$|.jpg+$");

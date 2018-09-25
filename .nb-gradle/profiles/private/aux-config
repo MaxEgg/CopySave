@@ -5,29 +5,20 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
       <group name="copyboard">
-        <file>file:/Users/max/Apps/cblistener/src/main/java/clipboard/ClipboardItem.java</file>
-        <file>file:/Users/max/Apps/cblistener/src/main/java/controllers/ClipboardController.java</file>
         <file>file:/Users/max/Apps/cblistener/src/main/java/App.java</file>
-        <file>file:/Users/max/Apps/cblistener/src/main/java/clipboard/ImageTransferable.java</file>
-        <file>file:/Users/max/Apps/cblistener/src/main/java/front/components/ClipboardItemView.java</file>
+        <file>file:/Users/max/Apps/cblistener/src/main/java/keyboard/KeyboardListener.java</file>
         <file>file:/Users/max/Apps/cblistener/build.gradle</file>
-        <file>file:/Users/max/Apps/cblistener/src/main/java/clipboard/HtmlTransferable.java</file>
-        <file>file:/Users/max/Apps/cblistener/src/main/java/clipboard/ClipboardContent.java</file>
-        <file>file:/Users/max/Apps/cblistener/src/main/java/clipboard/ClipboardEvent.java</file>
       </group>
     </open-files>
     <editor-bookmarks lastBookmarkId="0" xmlns="http://www.netbeans.org/ns/editor-bookmarks/2"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
       <group name="copyboard">
         <file>file:/Users/max/Apps/cblistener/src/main/java/clipboard/ClipboardItem.java</file>
+        <file>file:/Users/max/Apps/cblistener/src/main/java/controllers/ApplicationController.java</file>
         <file>file:/Users/max/Apps/cblistener/src/main/java/controllers/ClipboardController.java</file>
         <file>file:/Users/max/Apps/cblistener/src/main/java/App.java</file>
-        <file>file:/Users/max/Apps/cblistener/src/main/java/clipboard/ImageTransferable.java</file>
         <file>file:/Users/max/Apps/cblistener/src/main/java/front/components/ClipboardItemView.java</file>
-        <file>file:/Users/max/Apps/cblistener/build.gradle</file>
-        <file>file:/Users/max/Apps/cblistener/src/main/java/clipboard/HtmlTransferable.java</file>
-        <file>file:/Users/max/Apps/cblistener/src/main/java/clipboard/ClipboardContent.java</file>
-        <file>file:/Users/max/Apps/cblistener/src/main/java/clipboard/ClipboardEvent.java</file>
+        <file>file:/Users/max/Apps/cblistener/src/main/java/keyboard/KeyboardApi.java</file>
       </group>
     </open-files>
   </auxiliary>

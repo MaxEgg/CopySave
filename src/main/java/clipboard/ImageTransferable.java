@@ -18,10 +18,17 @@ public class ImageTransferable implements Transferable {
 
     private Image image;
     private String text;
+    private DataFlavor [] dataFlavors;    
     
+    public ImageTransferable(Image image) {
+        this.image = image;
+        this.dataFlavors = new DataFlavor[]{DataFlavor.imageFlavor};
+    }
+
     public ImageTransferable(Image image, String text) {
         this.image = image;
         this.text = text;
+        this.dataFlavors = new DataFlavor[]{DataFlavor.imageFlavor, DataFlavor.stringFlavor};
     }
 
     public Object getTransferData(DataFlavor flavor)throws UnsupportedFlavorException {
@@ -36,13 +43,13 @@ public class ImageTransferable implements Transferable {
     }
 
     public boolean isDataFlavorSupported(DataFlavor flavor) {
-        if(this.text != null &&!this.text.equals(null) && !this.text.isEmpty() && flavor == DataFlavor.stringFlavor ){
+        if(this.text != null  && flavor == DataFlavor.stringFlavor ){
             return true;
         }
         return flavor == DataFlavor.imageFlavor;
     }
 
     public DataFlavor[] getTransferDataFlavors() {
-        return new DataFlavor[]{DataFlavor.imageFlavor, DataFlavor.stringFlavor};
+        return this.dataFlavors;
     }
 }

@@ -5,42 +5,87 @@
  */
 package controllers;
 
-import clipboard.ClipboardContent;
-import clipboard.ClipboardEvent;
-import clipboard.ClipboardItem;
-import clipboard.ClipboardListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.application.Platform;
-import javafx.geometry.Rectangle2D;
+import javafx.animation.Interpolator;
+import javafx.animation.TranslateTransition;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-
+import javafx.util.Duration;
+import keyboard.KeyboardApi;
+import keyboard.KeyboardListener;
+import keyboard.KeyboardEvent;
+import singleton.Settings;
 /**
  *
  * @author max
  */
-public class ApplicationController {
+public class ApplicationController implements KeyboardListener {
     
-    private Stage stage;
-    private VBox root;
+    private Settings settings = Settings.getInstance();
+    private Stage stage = settings.stage;
+    private AnchorPane root;
     private ClipboardController clipboardBoardController;
-    
-    
-    public ApplicationController(Stage stage) {
-        this.stage = stage;
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        stage.setX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth());
+    private KeyboardApi keyboardApi;
+
+    public ApplicationController() {
+        initKeyboard();
     }
 
-    public VBox playMainScene() {
-        clipboardBoardController = new ClipboardController();
-        this.root = new VBox();
-        root.setStyle("-fx-focus-color: transparent; -fx-background-color: linear-gradient(to right, rgba(0,0,0,0) 0% , rgba(0,0,0,0.7));");
+    public AnchorPane playMainScene() {
+        this.root = new AnchorPane();
+        VBox vbox = new VBox();
+
+        root.getChildren().add(vbox);
+        
+        clipboardBoardController = new ClipboardController(root);
+        
+        root.setStyle("-fx-focus-color: transparent;");
         root.getChildren().add(clipboardBoardController.getView());
+   
         return root;
     }
-}
+    
+    public void KeyboardTriggerd(KeyboardEvent e){
+        System.out.println("event " + e.eventName);
+        switch(e.eventName){
+            case  "open":
+                open();
+                break;
+            case "close":
+                close();
+                break;
+            case "up":
+                break;
+            case "down":
+                break;
+        }
+    }
+       
+    private void initKeyboard(){
+         KeyboardListener lis = (KeyboardEvent e) -> {
+             KeyboardTriggerd(e);
+         };
+         keyboardApi = new KeyboardApi();
+         keyboardApi.addKeyboardTriggerListeren(lis);
+    }
+       
+    private void open(){
+        this.stage.setWidth(settings.itemWidth);
+        this.stage.setHeight(settings.stageHeight);
+        TranslateTransition slide = new TranslateTransition(new Duration(200), this.root);
+        slide.setInterpolator(Interpolator.EASE_IN);
+        slide.setToX(-settings.itemWidth);
+        slide.play();
+    }
+    
+    private void close(){
+        TranslateTransition slide = new TranslateTransition(new Duration(200), this.root);
+        slide.setInterpolator(Interpolator.EASE_IN);
+        slide.setToX(0);
+        slide.setOnFinished(e -> {
+            this.stage.setWidth(0);
+        });
+        slide.play();
+    }
+}   
+ 
