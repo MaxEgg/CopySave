@@ -25,7 +25,10 @@
         <name must-exist="no">${project}:classes</name>
       </task-names>
       <task-args/>
-      <task-jvm-args/>
+      <task-jvm-args>
+        <arg>-Xmx512m</arg>
+        <arg>-Xms512m</arg>
+      </task-jvm-args>
     </task>
   </built-in-tasks>
 </gradle-project-properties>

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controllers;
 
 import clipboard.ClipboardContent;
@@ -12,57 +7,67 @@ import clipboard.ClipboardItem.DataType;
 import clipboard.ClipboardListener;
 import clipboard.HtmlTransferable;
 import clipboard.ImageTransferable;
+import common.SizedTreeMap.OverFlowEvent;
+import common.SizedTreeMap.SizedTreeMap;
 import front.components.ClipboardItemView;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-import java.awt.MouseInfo;
-import javafx.event.EventType;
 import mouse.MouseFollower;
 import singleton.Settings;
+import common.SizedTreeMap.SizedTreeMapListener;
+import java.util.Collections;
+import java.util.Map.Entry;
+import javafx.animation.SequentialTransition;
+import javafx.animation.TranslateTransition;
+import singleton.Stages;
 
-public class ClipboardController {
-
+public class ClipboardController implements SizedTreeMapListener {
+    
     private ScrollPane scrollPane;
     private VBox vbox;
-    private List<ClipboardItem> clipboardItems = new ArrayList<>();;
     private Clipboard clipboard;
     private Stage stage;
-    private AnchorPane root;
+    private VBox root;
     Rectangle2D bounds;
     private MouseFollower mouseFollower;
     private Settings settings = Settings.getInstance();
+    private Stages stages = Stages.getInstance();
+    
+    private int selectIndex;
+    private int itemsAdded;
+    
+    private SizedTreeMap<Integer, ClipboardItem> clipboardItems = new SizedTreeMap<Integer, ClipboardItem>(settings.maxItems);
+    private SizedTreeMap<Integer, ClipboardItemView> clipboardItemsViews = new SizedTreeMap<Integer, ClipboardItemView>(settings.maxItems);
+    
     /**
      * Controller for the clipboard object;
      */
-    public ClipboardController(AnchorPane root) {
+    public ClipboardController(VBox root) {
+        System.out.println("Initiating clipboard");
         this.clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         initView();
         initListener();
         this.stage = settings.stage;
         this.root = root;
         bounds = Screen.getPrimary().getVisualBounds();
+        itemsAdded = 0;
+        resetSelectedIndex();
+        initSizedTreeMapListener();
     }
-
+    
     /**
      * Get the view
      *
@@ -71,16 +76,17 @@ public class ClipboardController {
     public ScrollPane getView() {
         return scrollPane;
     }
-
+    
     /**
      * Initiate the view component.
      */
     private void initView() {
         this.scrollPane = new ScrollPane();
-//        scrollPane.setPrefViewportHeight(10000);
+        
         scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("scroll-pane");
+
         scrollPane.setStyle("-fx-background: transparent; -fx-border-color: transparent;");
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
@@ -90,7 +96,7 @@ public class ClipboardController {
         vbox.setSpacing(2);
         scrollPane.setContent(vbox);
     }
-
+    
     /**
      * Initiate the clipboard content listener. When the event fires the addItem
      * function is called.
@@ -106,22 +112,23 @@ public class ClipboardController {
                         for (int x = 0; x < images.size(); ++x) {
                             ClipboardItem clipboardItem = new ClipboardItem(DataType.IMAGE);
                             clipboardItem.setImage(images.get(x));
-                            clipboardItems.add(clipboardItem);
+                            clipboardItems.put(itemsAdded,clipboardItem);
                             addItem(clipboardItem);
                         }
                     } else {
-                        clipboardItems.add(e.getClipboardItem());
+                        clipboardItems.put(itemsAdded, e.getClipboardItem());
                         addItem(e.getClipboardItem());
                     }
+                    ++itemsAdded;
                 }
             });
         };
-
+        
         ClipboardContent cc = new ClipboardContent();
         cc.addListener(lis);
         new Thread(cc).start();
     }
-
+    
     /**
      * The add item function created a new view and adds the content to the
      * clipboard
@@ -131,10 +138,10 @@ public class ClipboardController {
      * @param item The object inserted
      */
     public void addItem(ClipboardItem item) {
-        int index = clipboardItems.size() - 1;
-        ClipboardItemView clipboardItemView = new ClipboardItemView(index, item);
+        ClipboardItemView clipboardItemView = new ClipboardItemView(itemsAdded, item);
+        clipboardItemsViews.put(itemsAdded, clipboardItemView);
         AnchorPane itemView = clipboardItemView.getView();
-
+        
         itemView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -150,20 +157,22 @@ public class ClipboardController {
                 }
             }
         });
-
+        
         vbox.getChildren().add(0, itemView);
         vbox.applyCss();
         vbox.layout();
-
-        double height = vbox.getParent().getBoundsInParent().getHeight();
-        System.out.println("height "+ height +" / "+ bounds.getHeight() );
+        clipboardItemView.animate();
+        
+        double height = vbox.getBoundsInParent().getHeight();
+        
         if (height > bounds.getHeight()) {
             height = bounds.getHeight();
         }
+        
         Settings.getInstance().stageHeight = height;
-        this.stage.setHeight(height);
+        stage.setHeight(height);
     }
-
+    
     /**
      * Set the clipboard content to the clicked object
      *
@@ -172,7 +181,7 @@ public class ClipboardController {
     public void setClipboardContent(int index) {
         ClipboardItem clipboardItem = clipboardItems.get(index);
         DataType dataType = clipboardItem.getDataType();
-
+        
         switch (dataType) {
             case TEXT:
                 System.out.println("TEXT" + clipboardItem.getText());
@@ -199,13 +208,149 @@ public class ClipboardController {
                 break;
         }
     }
-
+    
     /**
-     * Get the clipboard list
-     *
-     * @return
+     * Remove the selected clipboard component
      */
-    public List<ClipboardItem> getList() {
-        return clipboardItems;
+    public void removeClipboardContent(){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                vbox.getChildren().remove(vbox.lookup("#"+selectIndex));
+                clipboardItemsViews.remove(selectIndex);
+                clipboardItems.remove(selectIndex);
+                changeSelectIndex(false);
+                selectNextItem();
+            }
+        });
+    }
+    
+    /**
+     * Select index
+     */
+    public void changeSelectIndex(boolean direction){
+        try{
+            if(direction){
+                selectIndex = clipboardItemsViews.higherKey(selectIndex);
+            }else{
+                selectIndex = clipboardItemsViews.lowerKey(selectIndex);
+            }
+        }catch(NullPointerException e){
+            System.out.println("hit the roof or the bottom");
+        }
+    }
+    
+    /**
+     * Select the first item on the list
+     */
+    public TranslateTransition selectFirstItem(){
+        selectIndex = clipboardItemsViews.lastKey();
+        ClipboardItemView view = clipboardItemsViews.get(selectIndex);
+        return view.setSelected();
+    }
+    
+    /**
+     * Select next item
+     */
+    public void selectNext(boolean direction){
+        deselectCurrentItem();
+        changeSelectIndex(direction);
+        selectNextItem();
+    }
+    
+    /**
+     * Reset item view back to start position
+     */
+    public void resetItemViews(){
+        if(selectIndex != -1){
+            select();
+            resetSelectedIndex();
+        }
+    }
+    
+    public void select() {
+        try{
+            ClipboardItemView selectedView = clipboardItemsViews.get(selectIndex);
+            setClipboardContent(selectedView.getId());
+        }catch(NullPointerException e){
+            System.out.println("hit the roof or the bottom");
+        }
+    }
+    
+    public void delete(){
+        try{
+            removeClipboardContent();
+        }catch(NullPointerException e){
+            System.out.println("Nullpointer on removing item");
+        }
+    }
+    
+    private void deselectCurrentItem(){
+        try{
+            ClipboardItemView view = clipboardItemsViews.get(selectIndex);
+            view.deSelect();
+        }catch(NullPointerException e){
+            System.out.println("Nullpointer on removing item");
+        }
+    }
+    
+    private void selectNextItem(){
+        try{
+            ClipboardItemView nextView = clipboardItemsViews.get(selectIndex);
+            TranslateTransition slide = nextView.setSelected();
+            slide.play();
+        }catch(NullPointerException e){
+            System.out.println("hit the roof or the bottom");
+        }
+    }
+    
+    private void resetSelectedIndex(){
+        selectIndex = -1;
+    }
+    
+    private void initSizedTreeMapListener(){
+        SizedTreeMapListener lis = (OverFlowEvent e) -> {
+            SizedTreeMapOverFlow(e);
+        };
+        clipboardItems.setSizedTreeListener(lis);
+    }
+    
+    @Override
+    public void SizedTreeMapOverFlow(OverFlowEvent e) {
+        selectIndex = (int)e.key;
+        removeClipboardContent();
+    }
+    
+    public void animateOpen(){
+        int key = clipboardItemsViews.lastKey();
+       
+        for(Entry<Integer, ClipboardItemView> entry : clipboardItemsViews.entrySet()){
+            TranslateTransition slide =  entry.getValue().transitionOpen(200);
+           
+            if(key == entry.getKey()){
+                slide.play();
+            }else{
+                TranslateTransition slide2 =  selectFirstItem();
+                SequentialTransition seq = new SequentialTransition(slide,slide2);
+                seq.play();
+            }
+        }
+    }
+    
+    void animateClose() {
+        int key = clipboardItemsViews.firstKey();
+        
+        for(Entry<Integer, ClipboardItemView> entry : clipboardItemsViews.entrySet()){
+            TranslateTransition slide = entry.getValue().transitionClose();
+            
+            if(key == entry.getKey()){
+                slide.setOnFinished(event -> {
+                    stages.closeDirect();
+                    resetItemViews();
+                });
+            }
+
+            slide.play();
+        }
     }
 }
