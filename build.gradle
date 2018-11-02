@@ -30,12 +30,10 @@ mainClassName = 'App'
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     compile 'com.google.guava:guava:23.0'
-//    compile 'com.1stleg:jnativehook:2.1.0'
+    //    compile 'com.1stleg:jnativehook:2.1.0'
     compile files("libs/jnativehook.jar")
-//    compile group: 'org.eclipse.jetty.websocket', name: 'websocket-server', version: '9.4.9.v20180320'
-    //richtext nog niet nodig, kan later wel handig zijn.
-//compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.9.0'
-    // Use JUnit test framework
+
+    compile group: 'org.json', name: 'json', version: '20180813'
     testCompile 'junit:junit:4.12'
 }
 

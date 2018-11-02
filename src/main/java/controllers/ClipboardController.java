@@ -28,7 +28,6 @@ import javafx.stage.Stage;
 import mouse.MouseFollower;
 import singleton.Settings;
 import common.SizedTreeMap.SizedTreeMapListener;
-import java.util.Collections;
 import java.util.Map.Entry;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
@@ -86,11 +85,11 @@ public class ClipboardController implements SizedTreeMapListener {
         scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("scroll-pane");
-
+        
         scrollPane.setStyle("-fx-background: transparent; -fx-border-color: transparent;");
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
-
+        
         this.vbox = new VBox();
         vbox.setStyle("-fx-background-color: transparent;");
         vbox.setSpacing(2);
@@ -145,13 +144,14 @@ public class ClipboardController implements SizedTreeMapListener {
         itemView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if(event.getClickCount() % 2 == 0){
+                if(event.getClickCount() % 1 == 0){
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
+                            deselectCurrentItem();
                             AnchorPane anchorPane = (AnchorPane) event.getSource();
-                            int id = Integer.parseInt(anchorPane.getId().trim());
-                            setClipboardContent(id);
+                            selectIndex = Integer.parseInt(anchorPane.getId().trim());
+                            selectNextItem();
                         }
                     });
                 }
@@ -213,12 +213,13 @@ public class ClipboardController implements SizedTreeMapListener {
      * Remove the selected clipboard component
      */
     public void removeClipboardContent(){
+        int index = selectIndex;
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                vbox.getChildren().remove(vbox.lookup("#"+selectIndex));
-                clipboardItemsViews.remove(selectIndex);
-                clipboardItems.remove(selectIndex);
+                vbox.getChildren().remove(vbox.lookup("#"+index));
+                clipboardItemsViews.remove(index);
+                clipboardItems.remove(index);
                 changeSelectIndex(false);
                 selectNextItem();
             }
@@ -272,6 +273,9 @@ public class ClipboardController implements SizedTreeMapListener {
         try{
             ClipboardItemView selectedView = clipboardItemsViews.get(selectIndex);
             setClipboardContent(selectedView.getId());
+            if(selectIndex != clipboardItemsViews.lastKey()){
+                removeClipboardContent();
+            }
         }catch(NullPointerException e){
             System.out.println("hit the roof or the bottom");
         }
@@ -323,10 +327,10 @@ public class ClipboardController implements SizedTreeMapListener {
     
     public void animateOpen(){
         int key = clipboardItemsViews.lastKey();
-       
+        
         for(Entry<Integer, ClipboardItemView> entry : clipboardItemsViews.entrySet()){
             TranslateTransition slide =  entry.getValue().transitionOpen(200);
-           
+            
             if(key == entry.getKey()){
                 slide.play();
             }else{
@@ -347,9 +351,10 @@ public class ClipboardController implements SizedTreeMapListener {
                 slide.setOnFinished(event -> {
                     stages.closeDirect();
                     resetItemViews();
+                    scrollPane.setVvalue(0.0);
                 });
             }
-
+            
             slide.play();
         }
     }

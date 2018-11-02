@@ -1,45 +1,27 @@
-/*
-* To change this license header, choose License Headers in Project Properties.
-* To change this template file, choose Tools | Templates
-* and open the template in the editor.
-*/
 package front.components;
 
 import clipboard.ClipboardItem;
 import clipboard.ClipboardItem.DataType;
 import common.OnFinish.OnFinish;
-import static java.lang.Integer.max;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.w3c.dom.Document;
 import singleton.Settings;
 import singleton.Stages;
 
@@ -54,8 +36,7 @@ public class ClipboardItemView extends OnFinish {
     private Rectangle rect;
     
     private double height = settings.itemHeight,
-            width = settings.itemWidth;
-    
+                   width = settings.itemWidth;
     
     public ClipboardItemView(int index, ClipboardItem item){
         Settings settings =  Settings.getInstance();
@@ -200,7 +181,7 @@ public class ClipboardItemView extends OnFinish {
     }
     
     public TranslateTransition transitionClose(){        
-        TranslateTransition slide = new TranslateTransition(new Duration(400), anchorPane);
+        TranslateTransition slide = new TranslateTransition(new Duration(settings.closeSpeed), anchorPane);
         slide.setInterpolator(Interpolator.EASE_IN);
         slide.setToX(width + settings.selectedWidth);
         return slide;

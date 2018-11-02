@@ -1,6 +1,5 @@
 package singleton;
 
-import javafx.animation.Transition;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -9,11 +8,11 @@ public class Settings {
     protected static Settings instance;
     
     public static Settings getInstance() {
-      if(instance == null) {
-         instance = new Settings();
-      }
-      return instance;
-   }
+        if(instance == null) {
+            instance = new Settings();
+        }
+        return instance;
+    }
     
     public static final int STATE_OPEN = 0;
     public static final int STATE_CLOSED = 1;
@@ -28,8 +27,10 @@ public class Settings {
     public int itemHeight = 100;
     public int itemMaxHeight = 200;
     public int selectedWidth = 20;    
-    public int maxItems = 30;
-    public int waitForOpen = 750;
+    public int maxItems = 20;
+    
+    public int waitForOpen = 950;
+    public int closeSpeed = 200;
     
     public double stageWidth;
     public double stageHeight;

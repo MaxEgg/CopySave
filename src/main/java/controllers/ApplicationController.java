@@ -23,10 +23,10 @@ public class ApplicationController implements KeyboardListener {
         System.out.println("Initiating application");
         initKeyboard();
     }
-
+        
     public VBox playMainScene() {
         VBox root = new VBox();
-
+            
         clipboardController = new ClipboardController(root); 
         root.getChildren().add(clipboardController.getView());
 
