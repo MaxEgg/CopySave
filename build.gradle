@@ -5,16 +5,19 @@
  * For more details take a look at the Java Quickstart chapter in the Gradle
  * user guide available at https://docs.gradle.org/4.6/userguide/tutorial_java_projects.html
  */
+
 plugins {
     // Apply the java plugin to add support for Java
     id 'java'
-
+    
     // Apply the application plugin to add support for building an application
     id 'application'
-    
     id "com.github.johnrengelman.shadow" version "4.0.1"
-//    id "com.github.johnrengelman.shadow" version "2.0.4"
+    id "de.inetsoftware.setupbuilder" version "4.5.4"
 }
+
+sourceCompatibility = 1.11
+compileJava.options.encoding = "UTF-8"
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -32,24 +35,49 @@ dependencies {
     compile 'com.google.guava:guava:23.0'
     //    compile 'com.1stleg:jnativehook:2.1.0'
     compile files("libs/jnativehook.jar")
-
     compile group: 'org.json', name: 'json', version: '20180813'
     testCompile 'junit:junit:4.12'
 }
 
+def jdk = System.getProperty("java.home");
+def mainclass = "copybox.App"; 
+def modulename = "copybox";
+
 sourceSets {
     main.java.srcDir "src/main"  
 }
-//
+
 jar {
-    from configurations.compile.collect { zipTree it }
+    from configurations.compile.collect { zipTree it } 
+    manifest {
+        attributes ('Main-Class': mainclass)
+    }
 }
 
 task fatJar(type: Jar) {
     manifest {
-        attributes 'Main-Class': 'App'
+        attributes 'Main-Class': mainclass
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
+}
+
+task javaPackager(type: Exec, dependsOn: assemble){
+    
+    workingDir project.projectDir
+    
+    commandLine = [
+        'javapackager',
+        '-deploy',
+        '-nosign',
+        '-native','image',
+        '-outdir', "${buildDir}/distribution",
+        '-outfile', project.name,
+        '-name' , project.name,
+        '-appclass', mainclass,
+        '-p', "${jdk}/jmods${File.pathSeparator}${buildDir}/libs",
+        '--add-modules', modulename,
+        '-m', "$modulename/$mainclass" 
+    ]    
 }
