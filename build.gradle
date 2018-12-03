@@ -5,16 +5,33 @@
  * For more details take a look at the Java Quickstart chapter in the Gradle
  * user guide available at https://docs.gradle.org/4.6/userguide/tutorial_java_projects.html
  */
+
+buildscript {
+    repositories {
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+    dependencies {
+        classpath 'com.google.gradle:osdetector-gradle-plugin:1.6.0'
+    }
+}
+
 plugins {
     // Apply the java plugin to add support for Java
     id 'java'
-
     // Apply the application plugin to add support for building an application
     id 'application'
-    
-    id "com.github.johnrengelman.shadow" version "4.0.1"
-//    id "com.github.johnrengelman.shadow" version "2.0.4"
+    //id "com.github.johnrengelman.shadow" version "4.0.1"
+    id "de.inetsoftware.setupbuilder" version "4.5.4"
 }
+
+
+
+apply plugin: 'com.google.osdetector'
+
+ext.platform = osdetector.os != 'osx' ? osdetector.os : 'mac'
+
+sourceCompatibility = 1.11
+compileJava.options.encoding = "UTF-8"
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -25,33 +42,65 @@ repositories {
 }
 
 // Define the main class for the application
-mainClassName = 'App'
+mainClassName = 'copysave.Main'
 
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     compile 'com.google.guava:guava:23.0'
-//    compile 'com.1stleg:jnativehook:2.1.0'
+    //    compile 'com.1stleg:jnativehook:2.1.0'
     compile files("libs/jnativehook.jar")
-//    compile group: 'org.eclipse.jetty.websocket', name: 'websocket-server', version: '9.4.9.v20180320'
-    //richtext nog niet nodig, kan later wel handig zijn.
-//compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.9.0'
-    // Use JUnit test framework
+    compile group: 'org.json', name: 'json', version: '20180813'
     testCompile 'junit:junit:4.12'
+    compile "org.openjfx:javafx-base:11:${platform}"
+    compile "org.openjfx:javafx-graphics:11:${platform}"
+    compile "org.openjfx:javafx-controls:11:${platform}"
+    compile "org.openjfx:javafx-fxml:11:${platform}"
+    compile "org.openjfx:javafx-swing:11:${platform}"
+    compile "org.openjfx:javafx-web:11:${platform}"
+    compile "org.openjfx:javafx-media:11:${platform}"
+
+    compile 'javax.annotation:javax.annotation-api:1.3.2'
 }
+
+def jdk = System.getProperty("java.home");
+def mainclass = "copysave.Main"; 
+def modulename = "copysave";
 
 sourceSets {
     main.java.srcDir "src/main"  
 }
-//
+
 jar {
-    from configurations.compile.collect { zipTree it }
+    from configurations.compile.collect { zipTree it } 
+    manifest {
+        attributes ('Main-Class': mainclass)
+    }
 }
 
 task fatJar(type: Jar) {
     manifest {
-        attributes 'Main-Class': 'App'
+        attributes 'Main-Class': mainclass
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
+
+//task javaPackager(type: Exec, dependsOn: assemble){
+//    
+//    workingDir project.projectDir
+//    
+//    commandLine = [
+//        'javapackager',
+//        '-deploy',
+//        '-nosign',
+//        '-native','image',
+//        '-outdir', "${buildDir}/distribution",
+//        '-outfile', project.name,
+//        '-name' , project.name,
+//        '-appclass', mainclass,
+//        '-p', "${jdk}/jmods${File.pathSeparator}${buildDir}/libs",
+//        '--add-modules', modulename,
+//        '-m', "$modulename/$mainclass" 
+//    ]    
+//}

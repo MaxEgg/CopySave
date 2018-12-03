@@ -1,0 +1,28 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/javafx-controls-11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/javafx-graphics-11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/javafx-base-11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/javafx-fxml-11-mac.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/javafx-media-11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/jnativehook.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/javafx-controls-11-mac.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/javafx-media-11-mac.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/javafx-graphics-11-mac.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/j2objc-annotations-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/json-20180813.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/guava-23.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/cblistener.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/animal-sniffer-annotations-1.14.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/error_prone_annotations-2.0.18.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/jsr305-1.3.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/javax.annotation-api-1.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/javafx-base-11-mac.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/javafx-swing-11-mac.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/distributions/cblistener/lib/javafx-web-11-mac.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
