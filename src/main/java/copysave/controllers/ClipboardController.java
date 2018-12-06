@@ -34,7 +34,10 @@ import java.util.Map.Entry;
 import javafx.animation.ParallelTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 import copysave.singleton.Stages;
+
 
 public class ClipboardController implements SizedTreeMapListener {
     
@@ -344,7 +347,7 @@ public class ClipboardController implements SizedTreeMapListener {
             }
             
             parallelTransition = new ParallelTransition();
-            
+            parallelTransition.getChildren().add(new PauseTransition(Duration.millis(100)));
             for(Entry<Integer, ClipboardItemView> entry : clipboardItemsViews.entrySet()){
                 TranslateTransition slide =  entry.getValue().transitionOpen(200);
                 

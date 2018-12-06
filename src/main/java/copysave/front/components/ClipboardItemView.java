@@ -22,6 +22,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.CacheHint;
 import copysave.singleton.Settings;
 import copysave.singleton.Stages;
 
@@ -130,6 +131,9 @@ public class ClipboardItemView extends OnFinish {
         rect = new Rectangle(width, height);
         pane.setClip(rect);
         pane.setStyle("-fx-background-color: "+backgroundColor+"; -fx-border-radius: 3px;  -fx-background-radius: 3px;");
+        pane.setCache(true);
+        pane.setCacheShape(true);
+        pane.setCacheHint(CacheHint.SPEED);
 
         this.anchorPane = new AnchorPane();
         anchorPane.setPrefSize(width, height);

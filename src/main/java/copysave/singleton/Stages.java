@@ -14,29 +14,29 @@ import javafx.util.Duration;
 import copysave.singleton.Settings;
 
 public class Stages extends OnFinish{
-    
+
     protected static Stages instance;
-    
+
     Settings settings = Settings.getInstance();
     Stage stage;
     ClipboardController clipboardController;
-    
+
     public Stages(){
         stage = settings.stage;
     }
-    
+
     public static Stages getInstance(){
         if(instance == null){
             instance = new Stages();
         }
-        
+
         return instance;
     }
-    
+
     public void open(){
         openDirect();
     }
-    
+
     public Stages close(){
         TranslateTransition slide = new TranslateTransition(new Duration(200), settings.root);
         slide.setInterpolator(Interpolator.EASE_IN);
@@ -46,29 +46,26 @@ public class Stages extends OnFinish{
             handleOnFinish();
         });
         slide.play();
-        
+
         return getInstance();
     }
-    
+
     public void openDirect(){
         settings.currentState = settings.STATE_OPEN;
-        
+
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        
-        System.out.println("primaryScreenBounds: " + (primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth()- settings.itemWidth - settings.selectedWidth - 1));
-        System.out.println("primaryScreenBounds.getMinX(): " +  primaryScreenBounds.getMinX());
-        
         stage.setX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - settings.itemWidth - settings.selectedWidth - settings.shadowSpacing - 1 );
         stage.setWidth((settings.itemWidth + settings.selectedWidth + settings.shadowSpacing));
         stage.setHeight(settings.stageHeight);
     }
-    
+
     public void closeDirect(){
         settings.currentState = settings.STATE_CLOSED;
+
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         stage.setX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - 1);
         stage.setWidth((double)1);
         stage.setHeight((double)0);
     }
-    
+
 }
