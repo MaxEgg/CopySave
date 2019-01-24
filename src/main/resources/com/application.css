@@ -1,0 +1,26 @@
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.clipboard-item-holder {
+    -fx-background-color: transparent;
+}
+
+.clipboard-item {
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+}
+
+.clipboard-item-anchor {
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 4, 0, 0, 0);
+}
+
+.clipboard-item-webview {
+    -fx-border-radius: 3px;
+}
