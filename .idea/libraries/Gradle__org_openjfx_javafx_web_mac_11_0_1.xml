@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.openjfx:javafx-web:mac:11.0.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-web/11.0.1/467ccc809a90d3a4f838fd7acd375a45793d617d/javafx-web-11.0.1-mac.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-web/11.0.1/798d149475da56c76ee531a5af8dab60803dfb85/javafx-web-11.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -99,19 +99,23 @@ public class VersionController{
 //            e.printStackTrace();
 //        }
 
-        String saveTo = "/";
         try {
+
             URL url = new URL("https://drive.google.com/uc?export=download&id=14hxaSjRLG6PmX2PSv30NI1gVty9DySSp");
             URLConnection conn = url.openConnection();
             InputStream in = conn.getInputStream();
             System.out.println(System.getProperty("user.dir"));
-            FileOutputStream out = new FileOutputStream(System.getProperty("user.dir") + "test.zip");
+            FileOutputStream out = new FileOutputStream(System.getProperty("user.dir") + ".zip");
+
             byte[] b = new byte[1024];
+
             int count;
             while ((count = in.read(b)) >= 0) {
                 out.write(b, 0, count);
             }
-            out.flush(); out.close(); in.close();
+            out.flush();
+            out.close();
+            in.close();
 
         } catch (IOException e) {
             e.printStackTrace();
